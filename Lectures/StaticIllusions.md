@@ -175,34 +175,144 @@ What is going wrong here? Well, f12 can enlighten us here again. As you may see,
 
 ## Triangle
 
-A good reason to learn about SVGs is that you can't draw triangles with divs (or rather, you will have an extremely hard time doing so). With SVGs, doing so is much easier, as you can draw any polygon using the `<polygon/>` tag. `<polygon/>` takes a specific attribute named `points` which takes a list of integers corresponding to the coordinates of the polygon's **TODO SOMMET**. Integers in the list will be paired to create the *x* and *y* coordinates of each point.
+A good reason to learn about SVGs is that you can't draw triangles with divs (or rather, you will have an extremely hard time doing so). With SVGs, doing so is much easier, as you can draw any polygon using the `<polygon/>` tag. `<polygon/>` takes a specific attribute named `points` which takes a list of integers corresponding to the coordinates of the polygon's vertices. Integers in the list will be paired to create the *x* and *y* coordinates of each point.
+
+You may separate integers with spaces ` ` or commas `,` alike. In the code for an isoceles triangle below, I use a mix of both: spaces separate *x* and *y* coordinates, while commas separates vertices.
+
 
 ```
-
+<svg>
+    <polygon points="0 200, 200 200, 100 0" fill="red" />
+</svg>
 ```
-Stroking
 
 ## Style usage
 
-Define in head
-CSS file
+In all the above examples, you probably reused the same value for the `style` attribute, over and over. HTML provides a convenient way to deal with this by providing a style sheet. It may be defined in the head of the file as per the following code (which defines an empty style).
+
+```
+<head>
+  <style>
+    <!-- Put the style here -->
+  </style>
+</head>
+```
+
+> **Comments in HTML** The `<!--` and `-->` serve as opening and closing markers for comments in HTML. This is made so that you'll (hopefully) never need them for any other purpose, since HTML is designed to display all kinds of texts.
+
+We can now define our stylesheet. First, let us make all divs have a red background by default.
+
+```
+<style>
+  div {
+    background-color: red
+  }
+</style>
+```
+
+This property can now be removed from the `style` of the `<div>` elements of the body. Try it!
+
+We now want to deal with the centering elements. Since we don't want to center everything, we'll manually flag elements that should be centered using the `class` attribute. To define a style for a class named `my-class`, we reuse the same syntax as before, but replace the element name (`div`) with the class name `my-class` preceded by a dot `.`. The dot indicates that this style applies to a class.
+
+```<style>
+  .centered {
+    position: absolute;
+    top: 50vh; left: 50vw;
+    transform: translate(-50%, -50%);
+  }
+</style>
+```
+
+
+> **Cascading Style Sheets** Style sheets can apply at several levels: to all elements of the document, to all elements of a kind (e.g. divs), to all elements of a special class (defined with the `class` attribute), or elements with a given id... These levels apply one after another, with most specific style sheets applying over the more generic ones; they are, in a sense, cascading. This precisely gave this 'style' language its name: *Cascading Style Sheets*, or *CSS* for short.
+
+
+To apply this style to our divs, we have to specify that this class applies such as in the following example.
+
+```
+<body>
+  <div class = "centered">
+  </div>
+</body>
+```
+
+> **Multiple classes** You may apply several classes to a single element, simply by listing them with a space in between different classes: e.g. `class = "centered circle"` if you also happen to have a `.circle` style.
+
+Of course, redefining it at the beginning of each sheet can be very tedious, which is why style sheets are often defined in their own `.css` file. Move everything we previously defined within `<style>` into a file named `shapes.css`. You may now load the styl in your HTML file, using the following code in the `<head>` section.
+
+```
+<head>
+  <link rel="stylesheet" href ="./shapes.css">
+  </link>
+</head>
+```
+
+Be careful, if you move the file from the current folder you will have to update the `href` attribute with the new path!
 
 # Combining shapes
-## Two circles
 
-Two solutions: move the position of the squares, or the transform.
-Note that it may not be super clear to just change position values -> introduce calc to show the computations, also allows to use pixels!
+You now have the basics to recreate the following illusion from [previous lectures](https://pcbs.readthedocs.io/en/latest/stimulus-creation.html#static-visual-stimuli):
+- Two circles ([solution (PLACEHOLDER)])
+- Troxler ([solution (PLACEHOLDER)])
+- Kanisza square ([solution (PLACEHOLDER)])
 
-## Troxler
+## A small note for Kanisza
 
-Many iterations, long file.
+If you did Kanisza (or peeked at the solution), you may have notice that we didn't actually draw circle slices, but rather hid the undesired parts of the circle with a square. This is because there is no simple way to do it with the tools we have now.
 
-Note that if you don't use calc, you update positions relative to the screen... and thus you do not create a square, since your screen isn't
+> **The issue of the present design** Since the result is visually satisfying, one may think it is not a big deal to leave it as such. However, remember that the whole point of the Kanisza illusion is to trigger a form *that does not exist in the first place*! You do not always control what happens on the screen, and as such this may introduce some terrible noise in your data. As an example, since HTML elements are actually displayed one after another, old computers might show the square with a delay that could be a comfounding factor to the effect you want to show!
 
-## Kanisza
-
-We can't draw arcs of circle... yet. So we have to superpose images.
-
-This is problematic to the illusion at hand, since the square is not supposed to exist in the first place! JS will help us with this.
+In the next section, we will learn how to draw these slices using canvas. These are some sort of 'drawing boards' that have to be drawn upon using JavaScript.
 
 # Combining shapes with JS
+
+## Plugging JavaScript into HTML
+
+```
+<body>
+  <script>
+    // ALL THAT IS WRITTEN HERE IS JAVASCRIPT !
+    console.log("Bonjour le monde !");
+  </script>
+</body>
+```
+
+f12 -> Go to console
+
+## Basic syntax of JavaScript
+
+```
+let x = 0;
+function printNumber(x){
+  console.log(x);
+  return -1;
+}
+
+console.log(x);
+printNumber(x);
+x = 1;
+printNumber(x);
+printNumber(0);
+console.log(printNumber(x));
+```
+
+Output:
+```
+0
+0
+1
+0
+1
+-1
+```
+
+**If you only get one 0** in the console, check that it is not because the two zeros were wrapped in the same line (a small `2` on the right).
+
+## Modifying elements with innerHTML
+
+```
+document.body.innerHTML +=
+  "<div>"
+```
+
+## Modifying elements with pure JS
