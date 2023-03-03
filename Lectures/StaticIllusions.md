@@ -268,18 +268,26 @@ In the next section, we will learn how to draw these slices using canvas. These 
 
 ## Plugging JavaScript into HTML
 
+You can plug a JavaScript script in HTML using the `<script>` tag. Note that everything within this tag will be interpreted as JavaScript.
+
+For our first script, we will display a simple text on the console. To this end, we may use the line code `console.log(myText)`.
+
 ```
 <body>
   <script>
-    // ALL THAT IS WRITTEN HERE IS JAVASCRIPT !
+    // All that is written here is JavaScript!
     console.log("Bonjour le monde !");
   </script>
 </body>
 ```
 
-f12 -> Go to console
+> TODO Here we use the method `log` from the object `console`. This relationship is embodied by the `.` between the two.
+
+Do not expect to see anything on your HTML page! The text is printed in the console, which you can access alongside the inspector. This can be very useful for debugging!
 
 ## Basic syntax of JavaScript
+
+The following code shows you the basics of the JavaScript synta
 
 ```
 let x = 0;
@@ -296,6 +304,8 @@ printNumber(0);
 console.log(printNumber(x));
 ```
 
+> The semicolumn `;` is facultative if you use line breaks.
+
 Output:
 ```
 0
@@ -308,11 +318,35 @@ Output:
 
 **If you only get one 0** in the console, check that it is not because the two zeros were wrapped in the same line (a small `2` on the right).
 
+### Loops
+
+This code prints integers from 0 to 5.
+
+```
+for (i = 0; i < 5; i++){
+  console.log(i);
+}
+```
+
 ## Modifying elements with innerHTML
 
 ```
 document.body.innerHTML +=
-  "<div>"
+  "<div style = "background-color:red; height: 200px; width: 200px"></div>"
 ```
 
+> **Multiline strings in JS** It is done by adding a backslash `\` continuation at the end of each line.
+> ```
+  "This is \
+      a \
+      multiline string".
+>    ```
+> Be careful not putting any space after the continuation!
+
 ## Modifying elements with pure JS
+
+Create element with `document.createElement("div")` (you may use which ever type you prefer)
+Modify element attributes (/ property): `element.id = "my-id"`
+Modify style: `element.style.height = "200px"`
+
+## Drawing on canvas.
