@@ -350,3 +350,97 @@ Modify element attributes (/ property): `element.id = "my-id"`
 Modify style: `element.style.height = "200px"`
 
 ## Drawing on canvas.
+
+# Using JsPsych
+
+JsPsych is a library that allows you to easily create experiments from premade plugins. First, download the library in version 7.3.0 from the [following link](https://www.github.com/jspsych/jspsych/releases/latest/download/jspsych.zip), and unzip it in your code folder. The following codes assume that the folder is named `jspsych-7.3.0`.
+
+## Loading JsPsych
+
+The library itself consists in the `jspsych.js` JavaScript file, which we will load in our experiment. To load an external script in HTML, one can simply use the `src` attribute of the `<script>` tag, with the path to the script file as a value.
+
+```javascript
+<!DOCTYPE html>
+<head>
+  <title>A simple jsPsych experiment</title>
+</head>
+<body>
+  <script src="./jspsych-7.3.0/jspsych.js">
+  </script>
+</body>
+```
+
+Here, you only loaded all the helper functions of JsPsych. You will now create an instance of the plugin using `initJsPsych`, which will handle all your JsPsych-related instructions.
+
+```javascript
+<script>
+  const jsPsych = initJsPsych();
+</script>
+```
+
+> **Constants** Notice that here we use a `const` instead of a `let` or `var` declaration. This means that the value of this variable can not be changed. This is convenient to prevent undesired bugs from redeclaring a variable.
+
+## Timeline and trials
+
+As said in the introduction of the JsPsych lecture series, JsPsych revolves around successive trials forming what is called a *timeline*. This timeline is implemented as an array containing all the trials. Arrays in JavaScript are defined using square brackets `[]`. We will first start with an empty timeline, which we'll gradually fill.
+
+```javascript
+let timeline = [];
+```
+
+> **Initializing non-empty arrays** Arrays may be implemented with items already in them, by simply putting the items within the square brackets `[]` and separating them with commas `,`. As an example, if you already have two trials `trial1` and `trial2`, you may create an array containing both (in this order) with `[trial1, trial2]`.
+
+We now want to create trials to fill our timeline with. You can think of trials as a parametrized task, with the task being effectively encoded as a JsPsych plugin.
+
+For now, we will stick to simple decision tasks. Stimuli will be displayed from simple HTML code similar to what we used previously. The dedicated plugin is (logically) called `jsPsychHtmlKeyboardResponse`.
+
+We can thus instantiate a trial with this plugin, using an object structure. Long story short, an object structure is defined using brackets `{}`; it holds properties, defined with `name: value`, and separated by commas `,`. Below is the instantiation of a `jsPsychHtmlKeyboardResponse` trial.
+
+```javascript
+let trial = {
+  type: jsPsychHtmlKeyboardResponse,
+};
+```
+
+> **Trailing commas** You may notice I left a comma `,` after the `type` property, although I did not specify any other property. This is not a typo: it is what we call a *trailing comma*. JavaScript licenses them as it makes it easy to add new elements.
+
+You may now add the trial to the timeline using the `push` method of arrays, which adds an element at the end of it.
+
+```javascript
+timeline.push(trial);
+```
+
+> **In-place modifications** TODO
+
+And we can finally run the experiment with our 1-trial timeline, using the `jsPsych` instance we previously created.
+
+```javascript
+jsPsych.run(timeline);
+```
+
+Your final code should look like this:
+```javascript
+// We initialize JsPsych
+const jsPsych = initJsPsych();
+
+// We create an empty timeline
+let timeline = [];
+
+// We create a basic decision trial
+let trial = {
+  type: jsPsychHtmlKeyboardResponse,
+};
+
+// We add this trial to the timeline
+// /!\ Do not forget this essential step /!\
+timeline.push(trial);
+
+// We run the timeline with JsPsych
+jsPsych.run(timeline);
+```
+
+You may now run it by opening your HTML page. Press a key and see what happens .
+
+If nothing happens (and this should be the case!), just do as you should always do in this situation: open the console. It should display you the following error message in red: "You must specify a value for the stimulus parameter in the html-keyboard-response plugin.". Such errors are fatal and prevent the script from proceeding any futher.
+
+What happens here is that, although we did specify the type of trial we wanted to do, we did not give it the necessary parameters for it to run properly. As the message tells us, we actually didn't specify what stimulus this decision task was about.
