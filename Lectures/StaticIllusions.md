@@ -620,11 +620,11 @@ In this course, we will only use local save, which is still useful for debugging
 jsPsych.data.get().localSave("./data.csv");
 ```
 
-Where (i.e. when) to should this instruction be executed? At the end of the experiment! Similarly to trials, our JsPsych instance can be created with an additional `on_finish` method.
+Where (i.e. when) to should this instruction be executed? At the end of the experiment! Similarly to trials, our JsPsych instance can be created with an additional `on_finish` method. Note that unlike for trials, this one does not take a `data` argument.
 
 ```javascript
 let jsPsych = initJsPsych({
-  on_finish: function(data){
+  on_finish: function(){
     jsPsych.data.get().localSave("./data.csv");
   }
 })
