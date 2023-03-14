@@ -13,8 +13,7 @@
   <script>
     const JS_PSYCH = initJsPsych();
 
-    const FIRST_COLOR_KEY = "F";
-    const SECOND_COLOR_KEY = "J";
+    const RESPONSE_KEYS = JS_PSYCH.randomization.shuffle(["F", "J"]);
     const FIRST_COLOR = "red";
     const SECOND_COLOR = "blue";
     const SHAPE_SIZE = 200
@@ -32,8 +31,8 @@
           Some shapes will be <span style="color: ${FIRST_COLOR}">${FIRST_COLOR}</span>, \
           others will be <span style="color: ${SECOND_COLOR}">${SECOND_COLOR}</span>.</p> \
         <p>Your task will be to identify the color of the shape:\
-          press <strong>[${FIRST_COLOR_KEY}]</strong> if the shape is <span style="color: ${FIRST_COLOR}">${FIRST_COLOR}</span>,\
-          press <strong>[${SECOND_COLOR_KEY}]</strong> if it is <span style="color: ${SECOND_COLOR}">${SECOND_COLOR}</span>.</p>\
+          press <strong>[${RESPONSE_KEYS[0]}]</strong> if the shape is <span style="color: ${FIRST_COLOR}">${FIRST_COLOR}</span>,\
+          press <strong>[${RESPONSE_KEYS[1]}]</strong> if it is <span style="color: ${SECOND_COLOR}">${SECOND_COLOR}</span>.</p>\
         <p>Your accuracy and reaction time will be measured. \
           So please stay focused and try to answer as soon as you have the answer!\ <br/>
           Some trials may be harder than others: do not worry if you make some errors!</p>\
@@ -72,14 +71,15 @@
     function createTrial(participantID, color, shape, shapeSize){
       let trial = {
         type: jsPsychHtmlKeyboardResponse,
-        choices: [FIRST_COLOR_KEY, SECOND_COLOR_KEY],
+        choices: RESPONSE_KEYS,
         data: {color: color,
                shape: shape,
                shapeSize: shapeSize,
                id: participantID,
              },
         on_finish: function(data){
-            data.response = JS_PSYCH.pluginAPI.compareKeys(data.response, FIRST_COLOR_KEY) ?
+            data.responseKey = data.response
+            data.response = JS_PSYCH.pluginAPI.compareKeys(data.response, RESPONSE_KEYS[0]) ?
               FIRST_COLOR : SECOND_COLOR
 
             data.response == data.color ? SOUND_INCORRECT.play() : SOUND_CORRECT.play();
@@ -91,7 +91,7 @@
         style = "\
           height:' + shapeSize + 'px;\
           width:' + shapeSize + 'px;\
-          position: absolute; top: 50%; left: 50%;\
+          position: absolute; top: 50vh; left: 50vw;\
           transform: translate(-50%, - 50%)">' +
           '<' + createShapeProperties(shape, shapeSize) + ' fill="' + color + '"/>' +
           '</svg>';

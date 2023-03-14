@@ -488,6 +488,8 @@ You should now be able to program a simple experiments. Say we want to test if s
 
 You can find a solution [here](../Examples/jspsych-color-detection-fixed-order).
 
+> **Difference between viewport width (`vw`) and height (`vh`) and percents (`%`)** If you used percents, you may notice that the figures are slightly off.JsPsych uses a content wrapper, so `%` refers to it size.
+
 ## Randomizing order
 
 Of course, an experiment with trials in a fixed order is not interesting, because any effect we find may be restricted to this specific order.
@@ -517,7 +519,7 @@ You may check with the console that properties added this way will not be added 
 In the mean time, we can now define our equality function:
 
 ```javascript
-timeline = jsPsych.randomization.shuffleNoRepeat(timeline, 1,
+timeline = jsPsych.randomization.shuffleNoRepeat(timeline,
   function(trial1, trial2){return trial1.shape == trial2.shape});
 ```
 
@@ -536,18 +538,77 @@ let trial = {
 
 As a small exercise: how can we update our equality test function?
 
-## Audio on success
+## Saving answer
 
-Here are two .wav sounds: [correct.wav] and [wrong.wav]
+If you go through the trials and try to analyse your data, you may notice that `response` only contains the pressed keys, and not the color responded by the participant. While you could theoretically reconstruct it during your data analysis, this approach is error-prone (in particular when you randomly assign responses keys).
 
-```
+> **Random response keys** It is advised to randomly assign response keys to your participants, since there are some known interactions between response side and task performance (see, e.g., [the SNARC effect](https://psycnet.apa.org/doiLanding?doi=10.1037%2F0096-3445.122.3.371)). To implement such a random choice, you may want to have a look at the [`Math.random` function](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Math/random) from native JavaScript.
+
+However, since the response is not known *a priori*, there is not much you can do as you create the trial (but you should register response side for safekeeping!). JsPsych provides us with a neat workaround with the `on_finish` property of trials. `on_finish` has to be a function that takes the trial's data as an argument; it is not expected to return anything.
+
+We can thus use on finish to modify the response encoded in our data:
+
+```javascript
 let trial = {
-  ...
-  on_finish = function(){
+  ...,
+  on_finish: function(data){
+    // We first save the response key in a more adequate variable
+    data.responseKey = data.response;
 
+    // We then save the actual responded color as the response
+    if(data.responseKey == "f"){
+      data.response = "red";
+    } else {
+      data.response = "blue";
+    }
   }
-}
+};
 ```
+
+> **Ternary operators** The `if-else` construction here is rather cumbersome. Most languages (including JavaScript) offer a ternary operator `?:` that allow to replace it: `condition ? a : b` is `a` when `condition` is true, and `b` otherwise. Try it!
+
+This design is however **very** error-prone: if the **[F]** key is not litteraly encoded as the character `"f"` (or whichever you use here), it may assign the wrong color to the response key! You also have to adapt everything each time you want to change the keys or the color.
+
+We'll only focus on the first issue of key encoding here, since you should be able to have a code that is more robust to keys/color changes on your own. JsPsych provides us with a way to compare the encoding of a key to a representation such as `"f"`: `jsPsych.pluginAPI.compareKeys`.
+
+```javascript
+let trial = {
+  ...,
+  on_finish: function(data){
+    // We first save the response key in a more adequate variable
+    data.responseKey = data.response;
+
+    // We then save the actual responded color as the response
+    if(jsPsych.pluginAPI.compareKeys(data.responseKey, "f")){
+      data.response = "red";
+    } else {
+      data.response = "blue";
+    }
+  }
+};
+```
+
+## Audio feedback
+
+Here are two .wav sounds: [correct.wav](../res/sound/correct.wav) and [incorrect.wav](../res/sound/incorrect.wav).We want to play them at the end of the trial to give audio feedback to our participants.
+
+To play audio in JavaScript, you first have to create `Audio` objects containing the audio file you want to play.
+
+```
+let audio = new Audio(pathToFile);
+```
+
+You can now play the audio using the `play` function of this audio object:
+
+```
+audio.play()
+```
+
+As small exercise, you should now be able to play a valid auditory feedback at the end of every trial. Hint below!
+
+<details><summary>Hint</summary>
+    You should use the `on_finish` property we saw above!
+</details>
 
 ## Saving the data
 
