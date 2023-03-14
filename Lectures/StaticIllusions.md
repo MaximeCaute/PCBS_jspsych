@@ -594,13 +594,13 @@ Here are two .wav sounds: [correct.wav](../res/sound/correct.wav) and [incorrect
 
 To play audio in JavaScript, you first have to create `Audio` objects containing the audio file you want to play.
 
-```
+```javascript
 let audio = new Audio(pathToFile);
 ```
 
 You can now play the audio using the `play` function of this audio object:
 
-```
+```javascript
 audio.play()
 ```
 
@@ -612,8 +612,43 @@ As small exercise, you should now be able to play a valid auditory feedback at t
 
 ## Saving the data
 
-Locally
+The experiment is almost ready! What we want to do now is to save our data. It can be saved locally (on the machine that took the experiment), or, more interestingly, on a distant server.
 
-Online
+In this course, we will only use local save, which is still useful for debugging and/or piloting. Our `data` object possesses a `localSave` method that precisely saves the experiment's data as a `.csv` file:
+
+```javascript
+jsPsych.data.get().localSave("./data.csv");
+```
+
+Where (i.e. when) to should this instruction be executed? At the end of the experiment! Similarly to trials, our JsPsych instance can be created with an additional `on_finish` method.
+
+```javascript
+let jsPsych = initJsPsych({
+  on_finish: function(data){
+    jsPsych.data.get().localSave("./data.csv");
+  }
+})
+```
+
+> You may be surprised that we make a reference to the variable `jsPsych` within its actual creation. This is possible because JavaScript will not evaluate functions before actually calling them. In other words, when `on_finish` is called at the end of the trial, the function will then (and only then) look at whatever variable labeled `jsPsych` it can find. By then, we will have created the variable already and so it will work. I personally dislike this design which is error-prone (what if some code changes the value of `jsPsych`?); however, this is what is officially used in [JsPsych's documentation](https://www.jspsych.org/7.0/overview/data/). One protection I can propose is to make `jsPsych` a constant with the `const` keyword. In JS like in most languages, constants have a name in capital letters and spaces ` ` are replaced by underscores `_`: `JS_PSYCH`.
+
+Of course, youwant to go further than just storing the data on the participant's computer. We want to retrieve it on our laboratory server! Since the code will be very tributary of how said server is set up, you should see details with your lab's referent (where can you store the code, what protections...). You may find some documentation [here](https://www.jspsych.org/7.0/overview/data/#storing-data-permanently-as-a-file)
 
 ## Random ID
+
+You may notice that we haven't done anything about participant IDs. Assigning each participant a *random* ID is of course mandatory in psychology experiments. JsPsych provides use with a convenient way to generate random IDs of a given length: `jsPsych.randomization.randomID`.
+
+We can create a 10-character long ID for our participant with the following line. We use a constant here because it should never be modified.
+```javascript
+const ID = jsPsych.randomization.randomID(10);
+```
+
+We can now add this ID info to all our trials. To this end, you can modify each trial individually using the `data` property as above. Another way is to add a common property to the whole data, as describe in the [documentation](https://www.jspsych.org/7.0/overview/data/#adding-data-to-all-trials).
+
+As a final note, you will most likely want to use this ID for the data file you save at the end of the experiment: if all participants' files have the same name, they will overwrite one another!
+
+```javascript
+jsPsych.data.get().localSave("./"+ID+".csv");
+```
+
+> **String formatting** To get a cleaner script, you may use string formatting to plugging code output into a string. Formatted string use this quote ``` and have codes marked between brackets `{}`, the opening bracket being preceded by a dollar sign `$`. An exemple: `Bonjour! My name is ${my_name}!`.
