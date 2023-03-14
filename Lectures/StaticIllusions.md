@@ -443,4 +443,116 @@ You may now run it by opening your HTML page. Press a key and see what happens .
 
 If nothing happens (and this should be the case!), just do as you should always do in this situation: open the console. It should display you the following error message in red: "You must specify a value for the stimulus parameter in the html-keyboard-response plugin.". Such errors are fatal and prevent the script from proceeding any futher.
 
-What happens here is that, although we did specify the type of trial we wanted to do, we did not give it the necessary parameters for it to run properly. As the message tells us, we actually didn't specify what stimulus this decision task was about.
+The issue here is that, although we did specify the type of our trial, we did not give it the necessary parameters for it to run properly. As the message tells us, we actually didn't specify what stimulus this decision task was about. In fact, the plugin displays "unspecified" as the top of the page.
+
+Let us first specify a simple text prompting to press any key as our stimulus. We can do it as follows.
+
+```
+let trial = {
+  type: jsPsychHtmlKeyboardResponse,
+  stimulus: "Bonjour! Please press any key."
+}
+```
+
+Now, loading the page should prompt you with the text you entered. If you press any key, it disappears: the experiment is actually finished.
+
+> We could also use `jsPsychImageKeyboardResponse` if we want to pre-generate our stimuli as images and display them directly. More precisions [here](https://www.jspsych.org/7.3/tutorials/rt-task/#part-4-displaying-stimuli-and-getting-responses).
+
+## Using the console interactively: accessing experiment data
+
+Before going any further, let us test that the experiment worked as intended. If so, the data in our trial should have been registered. You can access JsPsych's saved data using `jsPsych.data.get()`
+
+> If we break down this line, here we access the property `data` of our `jsPsych` instance. But `data` actually saves many metainfomations which are not of interest to us. Luckily; this `data` object has a convenient function (or method) `get()` that allows us to precisely access test data.
+
+Although you could use it in your script to access it at any given time (and, e.g. print it), you can also use the console to access it whenever you want. Just type the line into it!
+
+It should print you something of the form `Object { trials: (1) […] }`, which you can unfold: `trials` precisely contain the data about each trial. Right now, it should only contain one single trial, as an object with `rt`, `stimulus`, and `response` properties.
+
+## Response keys
+
+In your trial's data, `response` may contain any single key, since all are allowed by default. However, decision tasks will require them to press one of two chosen keys. We can specify the valid keys using (yet another) parameter: `choices`. As a value, we will pass it an array of valid keys in the forms of strings, here 'f' and 'j'
+
+```
+let trial = {
+  type: jsPsychHtmlKeyboardResponse,
+  stimulus: "Bonjour! Please press any key."
+  choices: ['f', 'j'].
+}
+```
+
+## Practice: color-detection task
+
+You should now be able to program a simple experiments. Say we want to test if shapes interfere with color detection: subjects will have to flag the color of successive shapes. They will have to press 'f' for red shapes and 'j' for blue shapes. The design should be 3 shapes (rectangle, triangle, circle) by 2 colors (red and blue), with 6 trials in total. The order will be fixed, and you are in charge of choosing it!
+
+> Beware of priming effects!
+
+You can find a solution [here](../Examples/jspsych-color-detection-fixed-order).
+
+## Randomizing order
+
+Of course, an experiment with trials in a fixed order is not interesting, because any effect we find may be restricted to this specific order.
+
+JsPsych provides use with a function to shuffle an array, i.e. order its element randomly: `jsPsych.randomization.shuffleNoRepeats`. To randomize the timeline, use:
+
+```javascript
+timeline = jsPsych.randomization.shuffleNoRepeats(timeline);
+```
+
+Here, we create a random array from the timeline. The `...NoRepeats` part specifies that equal elements are not in successive order. Since we only have a single occurrence of each trial, no item in our timeline is equal, and it thus does not have any effect here.
+
+However, it allows more to do more than prevent repetition of identical trials: we can also specifically define what it means to be equal. To do so, we simply pass an additional argument: a function that returns whether two trials are equals. Here, we want to define equal trials as those which have the same shape.
+
+First, let's add a shape property to our trial object. If you coded cleanly, creating a trial should be done using parameters (in a `for` loop or even better a function) including a `shape` variable. Adding it to the trial should thus be fairly straightforward.
+
+```javascript
+trial = {
+  ...
+  color: color;
+}
+```
+> **Additional properties to the trial** In JsPsych, a trial is a javascript object that uses some mandatory and/or optional properties. It will only ever look up those, but that doesn't mean you can not add other properties.
+
+You may check with the console that properties added this way will not be added in the data! The next session will develop how to do it.
+
+In the mean time, we can now define our equality function:
+
+```javascript
+timeline = jsPsych.randomization.shuffleNoRepeat(timeline, 1,
+  function(trial1, trial2){return trial1.shape == trial2.shape});
+```
+
+> **Factorial design** We used here a 3 by 2 factorial design, which was simple enough to generate with a `for` loop. For more complicated factorial design, you may want to look up the [`jsPsych.randomization.factorial` function](https://www.jspsych.org/7.0/reference/jspsych-randomization/#jspsychrandomizationfactorial).
+
+## Adding data to be saved
+
+Although we could theoretically retrieve the color and property from the HTML string, it would be rather uneasy. We can rather save directly `color` and `shape` values in our data, using the `data` property of our trial. `data` will be an object that contains, as properties, everything we might want to plug into our data.
+
+```
+let trial = {
+  ...
+  data: {color: "red", shape: "blue"},
+}
+```
+
+As a small exercise: how can we update our equality test function?
+
+## Audio on success
+
+Here are two .wav sounds: [correct.wav] and [wrong.wav]
+
+```
+let trial = {
+  ...
+  on_finish = function(){
+
+  }
+}
+```
+
+## Saving the data
+
+Locally
+
+Online
+
+## Random ID
