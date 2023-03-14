@@ -617,7 +617,7 @@ The experiment is almost ready! What we want to do now is to save our data. It c
 In this course, we will only use local save, which is still useful for debugging and/or piloting. Our `data` object possesses a `localSave` method that precisely saves the experiment's data as a `.csv` file:
 
 ```javascript
-jsPsych.data.get().localSave("./data.csv");
+jsPsych.data.get().localSave('csv', "data.csv");
 ```
 
 Where (i.e. when) to should this instruction be executed? At the end of the experiment! Similarly to trials, our JsPsych instance can be created with an additional `on_finish` method. Note that unlike for trials, this one does not take a `data` argument.
@@ -625,7 +625,7 @@ Where (i.e. when) to should this instruction be executed? At the end of the expe
 ```javascript
 let jsPsych = initJsPsych({
   on_finish: function(){
-    jsPsych.data.get().localSave("./data.csv");
+    jsPsych.data.get().localSave('csv', "data.csv");
   }
 })
 ```
@@ -648,7 +648,7 @@ We can now add this ID info to all our trials. To this end, you can modify each 
 As a final note, you will most likely want to use this ID for the data file you save at the end of the experiment: if all participants' files have the same name, they will overwrite one another!
 
 ```javascript
-jsPsych.data.get().localSave("./"+ID+".csv");
+jsPsych.data.get().localSave('csv', "data-"+ID+".csv");
 ```
 
 > **String formatting** To get a cleaner script, you may use string formatting to plugging code output into a string. Formatted string use this quote ``` and have codes marked between brackets `{}`, the opening bracket being preceded by a dollar sign `$`. An exemple: `Bonjour! My name is ${my_name}!`.
