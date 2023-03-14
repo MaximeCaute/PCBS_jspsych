@@ -652,3 +652,9 @@ jsPsych.data.get().localSave("./"+ID+".csv");
 ```
 
 > **String formatting** To get a cleaner script, you may use string formatting to plugging code output into a string. Formatted string use this quote ``` and have codes marked between brackets `{}`, the opening bracket being preceded by a dollar sign `$`. An exemple: `Bonjour! My name is ${my_name}!`.
+
+## Final code
+
+You can find a solution for the final code [here](../Examples/jspsych-color-decision-task). Make sure to try out to code it first! Practice makes perfect.
+
+I did not do it in this example, but you should leave an end message to your participants, thanking them for their time. You can create a `jsPsychHtmlKeyboardResponse` trial with no possible response by giving the `choices` property the `"NO_KEYS"` value.
