@@ -11,7 +11,9 @@
 
   <!-- Helpers -->
   <script>
-    const JS_PSYCH = initJsPsych();
+    const JS_PSYCH = initJsPsych({
+      on_finish: function(){JS_PSYCH.data.get().localSave(`./data-${ID}.csv`)}
+    });
 
     const RESPONSE_KEYS = JS_PSYCH.randomization.shuffle(["F", "J"]);
     const FIRST_COLOR = "red";
