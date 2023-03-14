@@ -41,8 +41,8 @@
       data: {id: ID},
     };
 
-    // let correctSound = new Audio('../res/sound/correct.wav');
-    // let incorrectSound = new Audio('../res/sound/incorrect.wav');
+    const SOUND_INCORRECT = new Audio('../res/sound/correct.wav');
+    const SOUND_CORRECT = new Audio('../res/sound/incorrect.wav');
 
     function createShapeProperties(shape, shapeSize){
       let shapeString = shape;
@@ -79,10 +79,10 @@
                id: participantID,
              },
         on_finish: function(data){
-            data.response = jsPsych.pluginAPI.compareKeys(data.response, FIRST_COLOR_KEY) ?
+            data.response = JS_PSYCH.pluginAPI.compareKeys(data.response, FIRST_COLOR_KEY) ?
               FIRST_COLOR : SECOND_COLOR
 
-            data.response == data.color ? correctSound.play() : incorrectSound.play();
+            data.response == data.color ? SOUND_INCORRECT.play() : SOUND_CORRECT.play();
           },
       };
 
