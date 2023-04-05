@@ -655,6 +655,6 @@ jsPsych.data.get().localSave('csv', "data-"+ID+".csv");
 
 ## Final code
 
-You can find a solution for the final code [here](../Examples/jspsych-color-decision-task). Make sure to try out to code it first! Practice makes perfect.
+You can find a solution for the final code [here](../Examples/jspsych-color-decision-task.html). Make sure to try out to code it first! Practice makes perfect.
 
 I did not do it in this example, but you should leave an end message to your participants, thanking them for their time. You can create a `jsPsychHtmlKeyboardResponse` trial with no possible response by giving the `choices` property the `"NO_KEYS"` value.
